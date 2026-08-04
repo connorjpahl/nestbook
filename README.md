@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Little Timeline
 
-## Getting Started
+A multi-tenant, interactive timeline where families add photos, videos, and
+narrated stories to celebrate a child's milestones as they grow. Any number
+of people (parents, grandparents, caregivers) can be invited to contribute to
+the same timeline; each family's data is fully isolated from every other
+family's via Postgres Row Level Security.
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 + Supabase
+(Postgres, Auth, Storage).
+
+## 1. Create a Supabase project
+
+1. Go to [supabase.com](https://supabase.com) and create a free project.
+2. In the SQL Editor, paste and run the contents of
+   [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql).
+   This creates every table, the `media` storage bucket, and all Row Level
+   Security policies.
+3. In **Project Settings → API**, copy the **Project URL** and **anon public**
+   key.
+4. (Optional, for local dev) In **Authentication → Providers → Email**,
+   disable "Confirm email" so new accounts can sign in immediately without
+   clicking an email link.
+
+## 2. Configure environment variables
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` with
+the values from step 1.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 3. Run it
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000), create an account, and
+start a timeline.
 
-To learn more about Next.js, take a look at the following resources:
+## How the multi-tenancy works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- A **timeline** belongs to one child. A **timeline_members** row links users
+  to timelines with a role (`owner`, `editor`, `viewer`).
+- Every table (`timelines`, `events`, `event_media`, and the private `media`
+  storage bucket) is locked down with RLS policies that check timeline
+  membership — a user can only ever see or modify data for timelines they've
+  been added to.
+- Timelines can only be created through the `create_timeline` Postgres
+  function, which atomically creates the timeline and makes the creator its
+  `owner` — there's no direct-insert path that could create an orphaned or
+  unowned timeline.
+- Photos and videos live in a **private** storage bucket
+  (`{timeline_id}/{event_id}/{filename}`); the app generates short-lived
+  signed URLs server-side after confirming the requester is a member.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+- `supabase/migrations/0001_init.sql` — full schema, RLS policies, storage
+  bucket and policies.
+- `src/lib/supabase/` — browser/server Supabase clients and the session-
+  refresh helper used by `src/proxy.ts`.
+- `src/lib/actions/` — server actions (auth, timeline creation, invites,
+  adding events with media uploads).
+- `src/app/` — routes: landing page, `/login`, `/signup`, `/dashboard`
+  (list/create timelines), `/timeline/[id]` (the timeline itself).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Any Next.js host works (e.g. [Vercel](https://vercel.com/new)). Set the same
+two `NEXT_PUBLIC_SUPABASE_*` environment variables in your hosting provider,
+then deploy. See [`.env.local.example`](.env.local.example) for the exact
+variable names.

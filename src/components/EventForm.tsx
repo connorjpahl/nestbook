@@ -1,15 +1,117 @@
 "use client";
 
-import { useActionState } from "react";
-import { addEvent } from "@/lib/actions/events";
+import { useRef, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import type { MediaType } from "@/types/database";
+
+const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50MB per file
 
 export function EventForm({ timelineId }: { timelineId: string }) {
-  const boundAction = addEvent.bind(null, timelineId);
-  const [state, formAction, pending] = useActionState(boundAction, null);
+  const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    const formData = new FormData(event.currentTarget);
+    const title = String(formData.get("title") ?? "").trim();
+    const narration = String(formData.get("narration") ?? "").trim();
+    const eventDate = String(formData.get("eventDate") ?? "");
+    const files = formData
+      .getAll("media")
+      .filter((f): f is File => f instanceof File && f.size > 0);
+
+    if (!title || !eventDate) {
+      setError("Please add a title and a date.");
+      return;
+    }
+
+    for (const file of files) {
+      if (file.size > MAX_FILE_BYTES) {
+        setError(`"${file.name}" is larger than 50MB.`);
+        return;
+      }
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+        setError(`"${file.name}" isn't a photo or video.`);
+        return;
+      }
+    }
+
+    setPending(true);
+
+    // Files are uploaded straight from the browser to Supabase Storage
+    // rather than through a server action, since Next.js server actions
+    // (and Vercel's serverless functions) cap request bodies well below
+    // the size of a typical phone photo or video.
+    const supabase = createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setError("You need to be signed in.");
+      setPending(false);
+      return;
+    }
+
+    const { data: newEvent, error: eventError } = await supabase
+      .from("events")
+      .insert({
+        timeline_id: timelineId,
+        title,
+        narration: narration || null,
+        event_date: eventDate,
+        created_by: user.id,
+      })
+      .select()
+      .single();
+
+    if (eventError || !newEvent) {
+      setError(eventError?.message ?? "Could not save the event.");
+      setPending(false);
+      return;
+    }
+
+    for (const file of files) {
+      const mediaType: MediaType = file.type.startsWith("video/") ? "video" : "photo";
+      const extension = file.name.includes(".") ? file.name.split(".").pop() : mediaType;
+      const path = `${timelineId}/${newEvent.id}/${crypto.randomUUID()}.${extension}`;
+
+      const { error: uploadError } = await supabase.storage.from("media").upload(path, file, {
+        contentType: file.type,
+      });
+
+      if (uploadError) {
+        setError(`Event saved, but "${file.name}" failed to upload: ${uploadError.message}`);
+        setPending(false);
+        router.refresh();
+        return;
+      }
+
+      await supabase.from("event_media").insert({
+        event_id: newEvent.id,
+        storage_path: path,
+        media_type: mediaType,
+      });
+    }
+
+    setPending(false);
+    setSuccess("Moment added!");
+    formRef.current?.reset();
+    router.refresh();
+  }
 
   return (
     <form
-      action={formAction}
+      ref={formRef}
+      onSubmit={handleSubmit}
       className="flex flex-col gap-4 rounded-xl border border-stone-200 bg-white p-5 shadow-sm"
     >
       <h2 className="font-medium text-stone-900">Add a moment</h2>
@@ -59,13 +161,9 @@ export function EventForm({ timelineId }: { timelineId: string }) {
         />
       </label>
 
-      {state?.error ? (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
-      ) : null}
-      {state?.success ? (
-        <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          {state.success}
-        </p>
+      {error ? <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p> : null}
+      {success ? (
+        <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{success}</p>
       ) : null}
 
       <button

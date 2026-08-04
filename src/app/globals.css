@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+/*
+ * This app is only designed for a light theme (white/stone cards, dark
+ * text). Explicitly opt out of the browser's dark color scheme so mobile
+ * dark-mode users don't get a dark page background under text colors that
+ * were only ever chosen for a light background.
+ */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -10,13 +17,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

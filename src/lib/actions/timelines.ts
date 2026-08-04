@@ -60,5 +60,7 @@ export async function inviteMember(timelineId: string, _prevState: unknown, form
   }
 
   revalidatePath(`/timeline/${timelineId}`);
-  return { success: `Invited ${email}.` };
+  return {
+    success: `Added ${email} to this timeline. No email is sent — they'll see it in their own dashboard next time they sign in.`,
+  };
 }

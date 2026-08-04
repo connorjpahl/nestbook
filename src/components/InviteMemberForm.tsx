@@ -10,7 +10,10 @@ export function InviteMemberForm({ timelineId }: { timelineId: string }) {
   return (
     <form action={formAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
       <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-stone-700">
-        Invite by email
+        Add family member by email
+        <span className="text-xs font-normal text-stone-400">
+          They must already have an account. No email is sent — let them know yourself.
+        </span>
         <input
           name="email"
           type="email"
@@ -35,7 +38,7 @@ export function InviteMemberForm({ timelineId }: { timelineId: string }) {
         disabled={pending}
         className="rounded-lg border border-stone-300 px-4 py-2 font-medium text-stone-700 transition hover:bg-stone-100 disabled:opacity-60"
       >
-        {pending ? "Inviting…" : "Invite"}
+        {pending ? "Adding…" : "Add"}
       </button>
       {state?.error ? <p className="text-sm text-red-700 sm:basis-full">{state.error}</p> : null}
       {state?.success ? (

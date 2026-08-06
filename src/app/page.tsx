@@ -1,32 +1,50 @@
 import Link from "next/link";
+import { NestMark } from "@/components/NestMark";
 
 const FEATURES = [
   {
     emoji: "📸",
     title: "Photos & videos",
     body: "Drop in photos and video clips for every milestone, from first steps to first day of school.",
+    tint: "terracotta" as const,
   },
   {
     emoji: "🎙️",
     title: "Narrated stories",
     body: "Add a written narration to each moment so the story behind the picture never gets lost.",
+    tint: "sage" as const,
   },
   {
     emoji: "👨‍👩‍👧",
     title: "Shared with family",
     body: "Invite parents, grandparents, and caregivers to add to the same timeline together.",
+    tint: "sage" as const,
   },
   {
     emoji: "🔒",
     title: "Private by default",
     body: "Every timeline is only visible to the people you invite to it — never public.",
+    tint: "terracotta" as const,
   },
 ];
 
 export default function Home() {
   return (
-    <div>
-      <section className="mx-auto max-w-4xl px-4 pt-20 pb-16 text-center">
+    <div className="overflow-hidden">
+      <section className="relative mx-auto max-w-4xl px-4 pt-20 pb-16 text-center">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-terracotta-100 opacity-60 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-10 left-1/2 -z-10 h-72 w-72 -translate-x-[calc(50%-10rem)] rounded-full bg-sage-100 opacity-50 blur-3xl"
+        />
+
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-terracotta-100">
+          <NestMark className="h-9 w-9" />
+        </div>
+
         <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
           Watch them grow, one moment at a time.
         </h1>
@@ -38,13 +56,13 @@ export default function Home() {
         <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href="/signup"
-            className="rounded-lg bg-amber-600 px-5 py-2.5 font-medium text-white transition hover:bg-amber-700"
+            className="rounded-lg bg-terracotta-600 px-5 py-2.5 font-medium text-white shadow-sm transition hover:bg-terracotta-700"
           >
             Start a timeline
           </Link>
           <Link
             href="/login"
-            className="rounded-lg border border-stone-300 px-5 py-2.5 font-medium text-stone-700 transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-white px-5 py-2.5 font-medium text-stone-700 transition hover:bg-stone-50"
           >
             Sign in
           </Link>
@@ -55,10 +73,18 @@ export default function Home() {
         {FEATURES.map((feature) => (
           <div
             key={feature.title}
-            className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm"
+            className={`rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md ${
+              feature.tint === "terracotta" ? "border-terracotta-100" : "border-sage-100"
+            }`}
           >
-            <div className="text-2xl">{feature.emoji}</div>
-            <h2 className="mt-2 font-semibold text-stone-900">{feature.title}</h2>
+            <div
+              className={`flex h-11 w-11 items-center justify-center rounded-xl text-2xl ${
+                feature.tint === "terracotta" ? "bg-terracotta-50" : "bg-sage-50"
+              }`}
+            >
+              {feature.emoji}
+            </div>
+            <h2 className="mt-3 font-semibold text-stone-900">{feature.title}</h2>
             <p className="mt-1 text-sm text-stone-600">{feature.body}</p>
           </div>
         ))}

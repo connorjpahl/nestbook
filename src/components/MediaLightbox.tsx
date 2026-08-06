@@ -112,7 +112,7 @@ export function MediaLightbox({
         </div>
 
         <div className="flex w-full flex-col gap-2 overflow-y-auto p-5 sm:w-72 sm:shrink-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-amber-400">
+          <p className="text-xs font-medium uppercase tracking-wide text-terracotta-400">
             {formattedDate}
           </p>
           <h3 className="text-lg font-semibold text-white">{title}</h3>

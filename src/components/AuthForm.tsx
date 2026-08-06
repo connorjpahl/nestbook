@@ -30,7 +30,7 @@ export function AuthForm({
             required
             autoComplete="name"
             placeholder="Jamie Rivera"
-            className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+            className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-200"
           />
         </label>
       ) : null}
@@ -43,7 +43,7 @@ export function AuthForm({
           required
           autoComplete="email"
           placeholder="you@example.com"
-          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-200"
         />
       </label>
 
@@ -56,7 +56,7 @@ export function AuthForm({
           minLength={6}
           autoComplete={mode === "signup" ? "new-password" : "current-password"}
           placeholder="••••••••"
-          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-200"
         />
       </label>
 
@@ -72,7 +72,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-lg bg-amber-600 px-4 py-2 font-medium text-white transition hover:bg-amber-700 disabled:opacity-60"
+        className="mt-2 rounded-lg bg-terracotta-600 px-4 py-2 font-medium text-white transition hover:bg-terracotta-700 disabled:opacity-60"
       >
         {pending
           ? "Please wait…"
@@ -85,14 +85,14 @@ export function AuthForm({
         {mode === "signup" ? (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-amber-700 hover:underline">
+            <Link href="/login" className="font-medium text-terracotta-700 hover:underline">
               Sign in
             </Link>
           </>
         ) : (
           <>
             New here?{" "}
-            <Link href="/signup" className="font-medium text-amber-700 hover:underline">
+            <Link href="/signup" className="font-medium text-terracotta-700 hover:underline">
               Create an account
             </Link>
           </>

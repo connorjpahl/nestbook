@@ -84,7 +84,7 @@ export default async function TimelinePage({
   const profileById = new Map((memberProfiles ?? []).map((p) => [p.id, p.display_name]));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
+    <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">{timeline.child_name}</h1>
@@ -100,8 +100,11 @@ export default async function TimelinePage({
         </div>
       ) : null}
 
-      <ol className="mt-8 flex flex-col gap-6 border-l-2 border-stone-200 pl-0">
-        {(events ?? []).map((event) => (
+      <ol className="relative mt-8 flex flex-col gap-8">
+        <div className="pointer-events-none absolute inset-y-0 left-[11px] w-0.5 -translate-x-1/2 bg-gradient-to-b from-terracotta-200 via-sage-200 to-terracotta-200 md:hidden" />
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-0.5 -translate-x-1/2 bg-gradient-to-b from-terracotta-200 via-sage-200 to-terracotta-200 md:block" />
+
+        {(events ?? []).map((event, i) => (
           <EventCard
             key={event.id}
             eventId={event.id}
@@ -110,6 +113,7 @@ export default async function TimelinePage({
             eventDate={event.event_date}
             media={mediaByEventId.get(event.id) ?? []}
             canEdit={canEdit}
+            align={i % 2 === 0 ? "left" : "right"}
           />
         ))}
 
@@ -120,18 +124,26 @@ export default async function TimelinePage({
         ) : null}
       </ol>
 
-      <div className="mt-10 rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+      <div className="mt-10 rounded-2xl border border-terracotta-100 bg-white p-5 shadow-sm">
         <h2 className="font-medium text-stone-900">Family members</h2>
         <ul className="mt-3 flex flex-col gap-2">
           {(memberRows ?? []).map((member) => (
             <li
               key={member.user_id}
-              className="flex items-center justify-between rounded-lg bg-stone-50 px-3 py-2 text-sm"
+              className="flex items-center justify-between rounded-lg bg-cream px-3 py-2 text-sm"
             >
               <span className="text-stone-700">
                 {profileById.get(member.user_id) ?? "Family member"}
               </span>
-              <span className="rounded-full bg-stone-200 px-2 py-0.5 text-xs font-medium capitalize text-stone-600">
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
+                  member.role === "owner"
+                    ? "bg-terracotta-100 text-terracotta-700"
+                    : member.role === "editor"
+                      ? "bg-sage-100 text-sage-700"
+                      : "bg-stone-200 text-stone-600"
+                }`}
+              >
                 {member.role}
               </span>
             </li>

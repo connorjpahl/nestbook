@@ -19,6 +19,38 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * "Warm Nest" palette: terracotta + sage on cream, standing in for the
+ * generic amber/stone starter palette. Full shade ramps so components can
+ * use bg-terracotta-600, text-sage-700, etc. like any built-in Tailwind
+ * color.
+ */
+@theme {
+  --color-cream: #fbf6ee;
+
+  --color-terracotta-50: #fbf1ea;
+  --color-terracotta-100: #f6e1d2;
+  --color-terracotta-200: #edc3a5;
+  --color-terracotta-300: #e2a176;
+  --color-terracotta-400: #d37f4e;
+  --color-terracotta-500: #c1622e;
+  --color-terracotta-600: #a84f22;
+  --color-terracotta-700: #863e1b;
+  --color-terracotta-800: #653016;
+  --color-terracotta-900: #472312;
+
+  --color-sage-50: #eff3ee;
+  --color-sage-100: #dce6dc;
+  --color-sage-200: #bcd0bb;
+  --color-sage-300: #9bb99a;
+  --color-sage-400: #7c9f7b;
+  --color-sage-500: #5b7a5c;
+  --color-sage-600: #4a6449;
+  --color-sage-700: #3a4e3a;
+  --color-sage-800: #2b3a2b;
+  --color-sage-900: #1e291e;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

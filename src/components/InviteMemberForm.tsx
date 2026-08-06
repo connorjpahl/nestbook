@@ -19,7 +19,7 @@ export function InviteMemberForm({ timelineId }: { timelineId: string }) {
           type="email"
           required
           placeholder="grandma@example.com"
-          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-200"
         />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-stone-700">
@@ -27,7 +27,7 @@ export function InviteMemberForm({ timelineId }: { timelineId: string }) {
         <select
           name="role"
           defaultValue="editor"
-          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+          className="rounded-lg border border-stone-300 px-3 py-2 text-base text-stone-900 outline-none focus:border-terracotta-500 focus:ring-2 focus:ring-terracotta-200"
         >
           <option value="editor">Can add moments</option>
           <option value="viewer">Can only view</option>

@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { HatchMark } from "@/components/HatchMark";
+import { SproutMark } from "@/components/SproutMark";
+import { GrowthTree } from "@/components/GrowthTree";
 
 const JOURNEY = [
-  { emoji: "🥚", label: "Newborn" },
-  { emoji: "🍼", label: "Baby" },
-  { emoji: "🧸", label: "Toddler" },
-  { emoji: "🎒", label: "School days" },
-  { emoji: "🎓", label: "Graduate" },
-];
+  { label: "Newborn" },
+  { label: "Baby" },
+  { label: "Toddler" },
+  { label: "School days" },
+  { label: "Graduate" },
+] as const;
 
 const FEATURES = [
   {
@@ -50,7 +51,7 @@ export default function Home() {
         />
 
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-terracotta-100">
-          <HatchMark className="h-9 w-9" />
+          <SproutMark className="h-9 w-9" />
         </div>
 
         <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
@@ -86,10 +87,14 @@ export default function Home() {
             aria-hidden
             className="pointer-events-none absolute left-0 right-0 top-7 hidden h-0.5 bg-gradient-to-r from-terracotta-200 via-sage-200 to-terracotta-200 sm:block"
           />
-          {JOURNEY.map((stage) => (
+          {JOURNEY.map((stage, i) => (
             <div key={stage.label} className="relative flex flex-col items-center gap-2">
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-2xl shadow-sm ring-1 ring-terracotta-100">
-                {stage.emoji}
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-terracotta-100">
+                {i === 0 ? (
+                  <SproutMark className="h-8 w-8" />
+                ) : (
+                  <GrowthTree stage={i as 1 | 2 | 3 | 4} className="h-9 w-9" />
+                )}
               </span>
               <span className="text-xs font-medium text-stone-500">{stage.label}</span>
             </div>

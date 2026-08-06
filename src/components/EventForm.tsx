@@ -6,6 +6,23 @@ import { createClient } from "@/lib/supabase/client";
 import type { MediaType } from "@/types/database";
 
 const MAX_FILE_BYTES = 50 * 1024 * 1024; // 50MB per file
+const MAX_VIDEO_SECONDS = 30;
+
+function getVideoDuration(file: File): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src);
+      resolve(video.duration);
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src);
+      reject(new Error(`Could not read "${file.name}" as a video.`));
+    };
+    video.src = URL.createObjectURL(file);
+  });
+}
 
 export function EventForm({ timelineId }: { timelineId: string }) {
   const router = useRouter();
@@ -40,6 +57,23 @@ export function EventForm({ timelineId }: { timelineId: string }) {
       if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
         setError(`"${file.name}" isn't a photo or video.`);
         return;
+      }
+      if (file.type.startsWith("video/")) {
+        let duration: number;
+        try {
+          duration = await getVideoDuration(file);
+        } catch (durationError) {
+          setError(
+            durationError instanceof Error
+              ? durationError.message
+              : `Could not read "${file.name}" as a video.`
+          );
+          return;
+        }
+        if (duration > MAX_VIDEO_SECONDS) {
+          setError(`"${file.name}" is longer than ${MAX_VIDEO_SECONDS} seconds.`);
+          return;
+        }
       }
     }
 
@@ -152,6 +186,9 @@ export function EventForm({ timelineId }: { timelineId: string }) {
 
       <label className="flex flex-col gap-1 text-sm font-medium text-stone-700">
         Photos & videos
+        <span className="text-xs font-normal text-stone-400">
+          Videos must be {MAX_VIDEO_SECONDS} seconds or shorter.
+        </span>
         <input
           name="media"
           type="file"

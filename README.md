@@ -1,4 +1,4 @@
-# Little Timeline
+# NestBook
 
 A multi-tenant, interactive timeline where families add photos, videos, and
 narrated stories to celebrate a child's milestones as they grow. Any number

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Little Timeline — grow-up-with-me family timelines",
+  title: "NestBook — grow-up-with-me family timelines",
   description:
     "An interactive timeline where families add photos, videos, and narrated stories to celebrate a child's milestones as they grow.",
 };

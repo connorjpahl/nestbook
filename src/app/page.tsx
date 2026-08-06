@@ -31,7 +31,7 @@ export default function Home() {
           Watch them grow, one moment at a time.
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-stone-600">
-          Little Timeline is a shared, scrollable timeline for your child&apos;s
+          NestBook is a shared, scrollable timeline for your child&apos;s
           milestones — photos, videos, and the stories behind them, kept in
           one place for your whole family.
         </p>

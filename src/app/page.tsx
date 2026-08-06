@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { NestMark } from "@/components/NestMark";
+import { HatchMark } from "@/components/HatchMark";
+
+const JOURNEY = [
+  { emoji: "🥚", label: "Newborn" },
+  { emoji: "🍼", label: "Baby" },
+  { emoji: "🧸", label: "Toddler" },
+  { emoji: "🎒", label: "School days" },
+  { emoji: "🎓", label: "Graduate" },
+];
 
 const FEATURES = [
   {
@@ -42,7 +50,7 @@ export default function Home() {
         />
 
         <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-terracotta-100">
-          <NestMark className="h-9 w-9" />
+          <HatchMark className="h-9 w-9" />
         </div>
 
         <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
@@ -66,6 +74,26 @@ export default function Home() {
           >
             Sign in
           </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 pb-16">
+        <p className="mb-8 text-center text-sm font-medium uppercase tracking-wide text-stone-400">
+          One timeline, their whole journey
+        </p>
+        <div className="relative flex flex-wrap items-start justify-center gap-x-8 gap-y-8 sm:justify-between">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-0 right-0 top-7 hidden h-0.5 bg-gradient-to-r from-terracotta-200 via-sage-200 to-terracotta-200 sm:block"
+          />
+          {JOURNEY.map((stage) => (
+            <div key={stage.label} className="relative flex flex-col items-center gap-2">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-2xl shadow-sm ring-1 ring-terracotta-100">
+                {stage.emoji}
+              </span>
+              <span className="text-xs font-medium text-stone-500">{stage.label}</span>
+            </div>
+          ))}
         </div>
       </section>
 

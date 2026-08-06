@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/actions/auth";
-import { NestMark } from "@/components/NestMark";
+import { HatchMark } from "@/components/HatchMark";
 
 export async function SiteHeader() {
   const supabase = await createClient();
@@ -14,7 +14,7 @@ export async function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold text-stone-900">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-terracotta-100">
-            <NestMark className="h-5 w-5" />
+            <HatchMark className="h-5 w-5" />
           </span>
           <span className="text-lg tracking-tight">NestBook</span>
         </Link>

@@ -158,9 +158,15 @@ export function EventCard({
                 >
                   {item.media_type === "video" ? (
                     <video
-                      src={item.signedUrl}
-                      className="aspect-square w-full object-cover transition duration-200 group-hover:scale-105"
+                      // iOS Safari won't paint a video's first frame as a
+                      // thumbnail on its own (unlike desktop browsers) --
+                      // appending a tiny time offset forces it to seek to
+                      // and decode that frame instead of showing blank/gray.
+                      src={`${item.signedUrl}#t=0.1`}
+                      preload="metadata"
+                      playsInline
                       muted
+                      className="aspect-square w-full object-cover transition duration-200 group-hover:scale-105"
                     />
                   ) : (
                     // Signed URLs are short-lived and per-user, so next/image's

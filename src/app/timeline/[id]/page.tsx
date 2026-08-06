@@ -42,7 +42,8 @@ export default async function TimelinePage({
     .from("events")
     .select("*")
     .eq("timeline_id", id)
-    .order("event_date", { ascending: false });
+    .order("event_date", { ascending: false })
+    .order("created_at", { ascending: false });
 
   const eventIds = (events ?? []).map((event) => event.id);
 

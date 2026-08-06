@@ -103,10 +103,12 @@ export default async function TimelinePage({
         {(events ?? []).map((event) => (
           <EventCard
             key={event.id}
+            eventId={event.id}
             title={event.title}
             narration={event.narration}
             eventDate={event.event_date}
             media={mediaByEventId.get(event.id) ?? []}
+            canEdit={canEdit}
           />
         ))}
 

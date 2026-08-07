@@ -28,6 +28,7 @@ export type TimelineEvent = {
   title: string;
   narration: string | null;
   event_date: string;
+  display_order: number | null;
   created_by: string;
   created_at: string;
 };
@@ -81,6 +82,7 @@ export type Database = {
           title: string;
           narration?: string | null;
           event_date: string;
+          display_order?: number | null;
           created_by: string;
           created_at?: string;
         }

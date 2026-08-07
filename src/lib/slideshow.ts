@@ -26,6 +26,7 @@ export async function loadSlideshowSlides(
     .select("*")
     .eq("timeline_id", timelineId)
     .order("event_date", { ascending: true })
+    .order("display_order", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 
   const eventList = events ?? [];

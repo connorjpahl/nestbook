@@ -45,6 +45,7 @@ export default async function TimelinePage({
     .select("*")
     .eq("timeline_id", id)
     .order("event_date", { ascending: false })
+    .order("display_order", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
 
   const eventIds = (events ?? []).map((event) => event.id);
@@ -104,7 +105,7 @@ export default async function TimelinePage({
         <div className="pointer-events-none absolute inset-y-0 left-[11px] w-0.5 -translate-x-1/2 bg-gradient-to-b from-terracotta-200 via-sage-200 to-terracotta-200 md:hidden" />
         <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-0.5 -translate-x-1/2 bg-gradient-to-b from-terracotta-200 via-sage-200 to-terracotta-200 md:block" />
 
-        {(events ?? []).map((event, i) => (
+        {(events ?? []).map((event, i, all) => (
           <EventCard
             key={event.id}
             eventId={event.id}
@@ -114,6 +115,8 @@ export default async function TimelinePage({
             media={mediaByEventId.get(event.id) ?? []}
             canEdit={canEdit}
             align={i % 2 === 0 ? "left" : "right"}
+            canMoveUp={i > 0 && all[i - 1].event_date === event.event_date}
+            canMoveDown={i < all.length - 1 && all[i + 1].event_date === event.event_date}
           />
         ))}
 

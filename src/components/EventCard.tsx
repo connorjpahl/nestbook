@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { reorderEvent } from "@/lib/actions/events";
 import { MediaLightbox } from "@/components/MediaLightbox";
 import type { MediaType } from "@/types/database";
 
@@ -34,6 +36,8 @@ export function EventCard({
   media,
   canEdit,
   align,
+  canMoveUp,
+  canMoveDown,
 }: {
   eventId: string;
   title: string;
@@ -42,7 +46,10 @@ export function EventCard({
   media: DisplayMedia[];
   canEdit: boolean;
   align: "left" | "right";
+  canMoveUp: boolean;
+  canMoveDown: boolean;
 }) {
+  const router = useRouter();
   const [displayTitle, setDisplayTitle] = useState(title);
   const [displayNarration, setDisplayNarration] = useState(narration);
   const [isEditing, setIsEditing] = useState(false);
@@ -51,6 +58,7 @@ export function EventCard({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [reordering, setReordering] = useState(false);
 
   const formattedDate = new Date(`${eventDate}T00:00:00`).toLocaleDateString(undefined, {
     year: "numeric",
@@ -94,6 +102,13 @@ export function EventCard({
     setDisplayTitle(nextTitle);
     setDisplayNarration(draftNarration.trim() || null);
     setIsEditing(false);
+  }
+
+  async function handleReorder(direction: "up" | "down") {
+    setReordering(true);
+    await reorderEvent(eventId, direction);
+    setReordering(false);
+    router.refresh();
   }
 
   function renderThumb(item: DisplayMedia, i: number, aspect: string) {
@@ -145,13 +160,39 @@ export function EventCard({
           {formattedDate}
         </p>
         {canEdit && !isEditing ? (
-          <button
-            type="button"
-            onClick={startEditing}
-            className="ml-auto text-xs font-medium text-stone-400 transition hover:text-terracotta-700"
-          >
-            Edit
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            {canMoveUp || canMoveDown ? (
+              <div className="flex items-center gap-0.5 rounded-md border border-stone-200 p-0.5">
+                <button
+                  type="button"
+                  onClick={() => handleReorder("up")}
+                  disabled={!canMoveUp || reordering}
+                  aria-label="Move earlier in the day"
+                  title="Move earlier in the day"
+                  className="flex h-5 w-5 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-terracotta-700 disabled:pointer-events-none disabled:opacity-30"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleReorder("down")}
+                  disabled={!canMoveDown || reordering}
+                  aria-label="Move later in the day"
+                  title="Move later in the day"
+                  className="flex h-5 w-5 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-terracotta-700 disabled:pointer-events-none disabled:opacity-30"
+                >
+                  ↓
+                </button>
+              </div>
+            ) : null}
+            <button
+              type="button"
+              onClick={startEditing}
+              className="text-xs font-medium text-stone-400 transition hover:text-terracotta-700"
+            >
+              Edit
+            </button>
+          </div>
         ) : null}
       </div>
 

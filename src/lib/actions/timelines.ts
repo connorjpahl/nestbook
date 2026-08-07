@@ -64,3 +64,57 @@ export async function inviteMember(timelineId: string, _prevState: unknown, form
     success: `Added ${email} to this timeline. No email is sent — they'll see it in their own dashboard next time they sign in.`,
   };
 }
+
+export async function updateTimeline(timelineId: string, _prevState: unknown, formData: FormData) {
+  const childName = String(formData.get("childName") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+
+  if (!childName) {
+    return { error: "Please enter a name." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("timelines")
+    .update({ child_name: childName, description: description || null })
+    .eq("id", timelineId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath(`/timeline/${timelineId}`);
+  revalidatePath("/dashboard");
+  return { success: true as const, childName, description: description || null };
+}
+
+export async function deleteTimeline(timelineId: string) {
+  const supabase = await createClient();
+
+  // Collect storage paths before deleting -- the DB rows cascade away with
+  // the timeline, but the actual files in the bucket won't clean themselves
+  // up, so gather what to remove first.
+  const { data: events } = await supabase.from("events").select("id").eq("timeline_id", timelineId);
+  const eventIds = (events ?? []).map((event) => event.id);
+
+  let storagePaths: string[] = [];
+  if (eventIds.length > 0) {
+    const { data: mediaRows } = await supabase
+      .from("event_media")
+      .select("storage_path")
+      .in("event_id", eventIds);
+    storagePaths = (mediaRows ?? []).map((row) => row.storage_path);
+  }
+
+  const { error } = await supabase.from("timelines").delete().eq("id", timelineId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  if (storagePaths.length > 0) {
+    await supabase.storage.from("media").remove(storagePaths);
+  }
+
+  redirect("/dashboard");
+}

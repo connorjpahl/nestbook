@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { EventForm } from "@/components/EventForm";
 import { EventCard, type DisplayMedia } from "@/components/EventCard";
 import { InviteMemberForm } from "@/components/InviteMemberForm";
+import { TimelineHeader } from "@/components/TimelineHeader";
+import { DeleteTimelineSection } from "@/components/DeleteTimelineSection";
 
 const SIGNED_URL_TTL_SECONDS = 60 * 60;
 
@@ -86,20 +87,12 @@ export default async function TimelinePage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-stone-900">{timeline.child_name}</h1>
-          {timeline.description ? (
-            <p className="mt-1 text-stone-500">{timeline.description}</p>
-          ) : null}
-        </div>
-        <Link
-          href={`/timeline/${id}/slideshow`}
-          className="flex shrink-0 items-center gap-1.5 rounded-lg border border-terracotta-200 bg-white px-3 py-1.5 text-sm font-medium text-terracotta-700 shadow-sm transition hover:bg-terracotta-50"
-        >
-          ▶ Slideshow
-        </Link>
-      </div>
+      <TimelineHeader
+        timelineId={id}
+        initialChildName={timeline.child_name}
+        initialDescription={timeline.description}
+        canEdit={canEdit}
+      />
 
       {canEdit ? (
         <div className="mt-6">
@@ -160,6 +153,7 @@ export default async function TimelinePage({
         {isOwner ? (
           <div className="mt-4 border-t border-stone-100 pt-4">
             <InviteMemberForm timelineId={id} />
+            <DeleteTimelineSection timelineId={id} childName={timeline.child_name} />
           </div>
         ) : null}
       </div>

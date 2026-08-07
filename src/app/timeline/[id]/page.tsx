@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { EventForm } from "@/components/EventForm";
@@ -91,6 +92,12 @@ export default async function TimelinePage({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
+      <Link
+        href="/dashboard"
+        className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-stone-500 transition hover:text-terracotta-700"
+      >
+        ← Back to timelines
+      </Link>
       <TimelineHeader
         timelineId={id}
         initialChildName={timeline.child_name}

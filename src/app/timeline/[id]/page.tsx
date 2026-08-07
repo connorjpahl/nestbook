@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { EventForm } from "@/components/EventForm";
@@ -92,6 +93,12 @@ export default async function TimelinePage({
             <p className="mt-1 text-stone-500">{timeline.description}</p>
           ) : null}
         </div>
+        <Link
+          href={`/timeline/${id}/slideshow`}
+          className="flex shrink-0 items-center gap-1.5 rounded-lg border border-terracotta-200 bg-white px-3 py-1.5 text-sm font-medium text-terracotta-700 shadow-sm transition hover:bg-terracotta-50"
+        >
+          ▶ Slideshow
+        </Link>
       </div>
 
       {canEdit ? (

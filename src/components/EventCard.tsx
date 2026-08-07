@@ -167,8 +167,8 @@ export function EventCard({
                   type="button"
                   onClick={() => handleReorder("up")}
                   disabled={!canMoveUp || reordering}
-                  aria-label="Move earlier in the day"
-                  title="Move earlier in the day"
+                  aria-label="Move up"
+                  title="Move up"
                   className="flex h-5 w-5 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-terracotta-700 disabled:pointer-events-none disabled:opacity-30"
                 >
                   ↑
@@ -177,8 +177,8 @@ export function EventCard({
                   type="button"
                   onClick={() => handleReorder("down")}
                   disabled={!canMoveDown || reordering}
-                  aria-label="Move later in the day"
-                  title="Move later in the day"
+                  aria-label="Move down"
+                  title="Move down"
                   className="flex h-5 w-5 items-center justify-center rounded text-stone-500 transition hover:bg-stone-100 hover:text-terracotta-700 disabled:pointer-events-none disabled:opacity-30"
                 >
                   ↓

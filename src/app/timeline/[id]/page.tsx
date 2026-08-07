@@ -40,12 +40,15 @@ export default async function TimelinePage({
   const canEdit = membership?.role === "owner" || membership?.role === "editor";
   const isOwner = membership?.role === "owner";
 
+  // display_order is the primary sort key once any event on this timeline
+  // has been manually reordered (see reorderEvent); event_date/created_at
+  // are only the fallback for events that have never been touched.
   const { data: events } = await supabase
     .from("events")
     .select("*")
     .eq("timeline_id", id)
+    .order("display_order", { ascending: true, nullsFirst: true })
     .order("event_date", { ascending: false })
-    .order("display_order", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false });
 
   const eventIds = (events ?? []).map((event) => event.id);
@@ -115,8 +118,8 @@ export default async function TimelinePage({
             media={mediaByEventId.get(event.id) ?? []}
             canEdit={canEdit}
             align={i % 2 === 0 ? "left" : "right"}
-            canMoveUp={i > 0 && all[i - 1].event_date === event.event_date}
-            canMoveDown={i < all.length - 1 && all[i + 1].event_date === event.event_date}
+            canMoveUp={i > 0}
+            canMoveDown={i < all.length - 1}
           />
         ))}
 

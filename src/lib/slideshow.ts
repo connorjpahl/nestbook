@@ -21,12 +21,15 @@ export async function loadSlideshowSlides(
   supabase: ServerSupabase,
   timelineId: string
 ): Promise<SlideshowSlide[]> {
+  // Plays in exactly the reverse of the timeline page's order (which is
+  // display_order first, event_date/created_at as fallback -- see the
+  // matching comment there and in reorderEvent).
   const { data: events } = await supabase
     .from("events")
     .select("*")
     .eq("timeline_id", timelineId)
+    .order("display_order", { ascending: false, nullsFirst: false })
     .order("event_date", { ascending: true })
-    .order("display_order", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
 
   const eventList = events ?? [];
